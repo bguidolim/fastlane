@@ -20,6 +20,13 @@ module Fastlane
           UI.verbose("Cleaning up '#{file}'")
           File.delete(file)
         end
+        
+        # Cleaning shared values
+        Actions.lane_context[Actions::SharedValues::IPA_OUTPUT_PATH] = ''
+        Actions.lane_context[Actions::SharedValues::DSYM_OUTPUT_PATH] = ''
+        Actions.lane_context[Actions::SharedValues::CERT_FILE_PATH] = ''
+        Actions.lane_context[Actions::SharedValues::SIGH_PROFILE_PATHS] = []
+        Actions.lane_context[Actions::SharedValues::DSYM_PATHS] = []
 
         UI.success('Cleaned up build artifacts 🐙')
       end
