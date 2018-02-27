@@ -20,7 +20,7 @@ module Fastlane
           UI.verbose("Cleaning up '#{file}'")
           File.delete(file)
         end
-        
+
         # Cleaning shared values
         Actions.lane_context[Actions::SharedValues::IPA_OUTPUT_PATH] = ''
         Actions.lane_context[Actions::SharedValues::DSYM_OUTPUT_PATH] = ''
