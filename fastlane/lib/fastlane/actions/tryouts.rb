@@ -58,11 +58,11 @@ module Fastlane
       end
 
       def self.description
-        "Upload a new build to Tryouts"
+        "Upload a new build to [Tryouts](https://tryouts.io/)"
       end
 
       def self.details
-        "More information http://tryouts.readthedocs.org/en/latest/releases.html#create-release"
+        "More information: [http://tryouts.readthedocs.org/en/latest/releases.html#create-release](http://tryouts.readthedocs.org/en/latest/releases.html#create-release)"
       end
 
       def self.available_options
@@ -71,14 +71,14 @@ module Fastlane
                                      env_name: "TRYOUTS_APP_ID",
                                      description: "Tryouts application hash",
                                      verify_block: proc do |value|
-                                       UI.user_error!("No application identifier for Tryouts given, pass using `app_id: 'application id'`") unless value and !value.empty?
+                                       UI.user_error!("No application identifier for Tryouts given, pass using `app_id: 'application id'`") unless value && !value.empty?
                                      end),
           FastlaneCore::ConfigItem.new(key: :api_token,
                                      env_name: "TRYOUTS_API_TOKEN",
                                      sensitive: true,
                                      description: "API Token for Tryouts Access",
                                      verify_block: proc do |value|
-                                       UI.user_error!("No API token for Tryouts given, pass using `api_token: 'token'`") unless value and !value.empty?
+                                       UI.user_error!("No API token for Tryouts given, pass using `api_token: 'token'`") unless value && !value.empty?
                                      end),
           FastlaneCore::ConfigItem.new(key: :build_file,
                                      env_name: "TRYOUTS_BUILD_FILE",

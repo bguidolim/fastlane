@@ -70,7 +70,7 @@ module Fastlane
 
         output = verify(command: command, must_includes: must_includes, params: params)
 
-        if output.include?("source=Mac App Store") or output.include?("source=Apple") or output.include?("source=Apple System")
+        if output.include?("source=Mac App Store") || output.include?("source=Apple") || output.include?("source=Apple System")
           UI.success("Successfully verified Xcode installation at path '#{params[:xcode_path]}' 🎧")
         else
           show_and_raise_error("Invalid Download Source of Xcode: #{output}", params[:xcode_path])
@@ -112,11 +112,7 @@ module Fastlane
       end
 
       def self.details
-        [
-          "This action was implemented after the recent Xcode attack to make sure",
-          "you're not using a hacked Xcode installation.",
-          "http://researchcenter.paloaltonetworks.com/2015/09/novel-malware-xcodeghost-modifies-xcode-infects-apple-ios-apps-and-hits-app-store/"
-        ].join("\n")
+        "This action was implemented after the recent Xcode attack to make sure you're not using a [hacked Xcode installation](http://researchcenter.paloaltonetworks.com/2015/09/novel-malware-xcodeghost-modifies-xcode-infects-apple-ios-apps-and-hits-app-store/)."
       end
 
       def self.available_options

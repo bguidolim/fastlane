@@ -215,7 +215,7 @@ module Fastlane
       end
     end
 
-    def execute_action(method_sym, class_ref, arguments, custom_dir: nil, from_action: false, configuration_language: nil)
+    def execute_action(method_sym, class_ref, arguments, custom_dir: nil, from_action: false)
       if custom_dir.nil?
         custom_dir ||= "." if Helper.test?
         custom_dir ||= ".."
@@ -224,10 +224,6 @@ module Fastlane
       verify_supported_os(method_sym, class_ref)
 
       begin
-        # https://github.com/fastlane/fastlane/issues/11913
-        # launch_context = FastlaneCore::ActionLaunchContext.context_for_action_name(method_sym.to_s, configuration_language: configuration_language, args: ARGV)
-        # FastlaneCore.session.action_launched(launch_context: launch_context)
-
         Dir.chdir(custom_dir) do # go up from the fastlane folder, to the project folder
           # If another action is calling this action, we shouldn't show it in the summary
           # (see https://github.com/fastlane/fastlane/issues/4546)
@@ -238,7 +234,7 @@ module Fastlane
             # Since we usually just need the passed hash, we'll just use the first object if there is only one
             if arguments.count == 0
               arguments = ConfigurationHelper.parse(class_ref, {}) # no parameters => empty hash
-            elsif arguments.count == 1 and arguments.first.kind_of?(Hash)
+            elsif arguments.count == 1 && arguments.first.kind_of?(Hash)
               arguments = ConfigurationHelper.parse(class_ref, arguments.first) # Correct configuration passed
             elsif !class_ref.available_options
               # This action does not use the new action format
@@ -254,11 +250,7 @@ module Fastlane
               puts("==========================================\n".deprecated)
             end
             class_ref.runner = self # needed to call another action form an action
-            return_value = class_ref.run(arguments)
-
-            action_completed(method_sym.to_s, status: FastlaneCore::ActionCompletionStatus::SUCCESS)
-
-            return return_value
+            return class_ref.run(arguments)
           end
         end
       rescue Interrupt => e
@@ -266,14 +258,11 @@ module Fastlane
       rescue FastlaneCore::Interface::FastlaneCommonException => e # these are exceptions that we dont count as crashes
         raise e
       rescue FastlaneCore::Interface::FastlaneError => e # user_error!
-        FastlaneCore::CrashReporter.report_crash(exception: e)
         action_completed(method_sym.to_s, status: FastlaneCore::ActionCompletionStatus::USER_ERROR, exception: e)
         raise e
       rescue Exception => e # rubocop:disable Lint/RescueException
         # high chance this is actually FastlaneCore::Interface::FastlaneCrash, but can be anything else
         # Catches all exceptions, since some plugins might use system exits to get out
-        FastlaneCore::CrashReporter.report_crash(exception: e)
-
         action_completed(method_sym.to_s, status: FastlaneCore::ActionCompletionStatus::FAILED, exception: e)
         raise e
       end
@@ -312,7 +301,7 @@ module Fastlane
     def add_lane(lane, override = false)
       lanes[lane.platform] ||= {}
 
-      if !override and lanes[lane.platform][lane.name]
+      if !override && lanes[lane.platform][lane.name]
         UI.user_error!("Lane '#{lane.name}' was defined multiple times!")
       end
 

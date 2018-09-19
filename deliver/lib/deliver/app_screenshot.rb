@@ -17,6 +17,8 @@ module Deliver
       IOS_55 = "iOS-5.5-in"
       # iPhone X
       IOS_58 = "iOS-5.8-in"
+      # iPhone XS Max
+      IOS_65 = "iOS-6.5-in"
       # iPad
       IOS_IPAD = "iOS-iPad"
       # iPad 10.5
@@ -31,6 +33,8 @@ module Deliver
       IOS_55_MESSAGES = "iOS-5.5-in-messages"
       # iPhone X iMessage
       IOS_58_MESSAGES = "iOS-5.8-in-messages"
+      # iPhone XS Max iMessage
+      IOS_65_MESSAGES = "iOS-6.5-in-messages"
       # iPad iMessage
       IOS_IPAD_MESSAGES = "iOS-iPad-messages"
       # iPad 10.5 iMessage
@@ -75,6 +79,7 @@ module Deliver
         ScreenSize::IOS_47 => "iphone6",
         ScreenSize::IOS_55 => "iphone6Plus",
         ScreenSize::IOS_58 => "iphone58",
+        ScreenSize::IOS_65 => "iphone65",
         ScreenSize::IOS_IPAD => "ipad",
         ScreenSize::IOS_IPAD_10_5 => "ipad105",
         ScreenSize::IOS_IPAD_PRO => "ipadPro",
@@ -82,6 +87,7 @@ module Deliver
         ScreenSize::IOS_47_MESSAGES => "iphone6",
         ScreenSize::IOS_55_MESSAGES => "iphone6Plus",
         ScreenSize::IOS_58_MESSAGES => "iphone58",
+        ScreenSize::IOS_65_MESSAGES => "iphone65",
         ScreenSize::IOS_IPAD_MESSAGES => "ipad",
         ScreenSize::IOS_IPAD_PRO_MESSAGES => "ipadPro",
         ScreenSize::IOS_IPAD_10_5_MESSAGES => "ipad105",
@@ -100,6 +106,7 @@ module Deliver
         ScreenSize::IOS_47 => "iPhone 6",
         ScreenSize::IOS_55 => "iPhone 6 Plus",
         ScreenSize::IOS_58 => "iPhone X",
+        ScreenSize::IOS_65 => "iPhone XS Max",
         ScreenSize::IOS_IPAD => "iPad",
         ScreenSize::IOS_IPAD_10_5 => "iPad 10.5",
         ScreenSize::IOS_IPAD_PRO => "iPad Pro",
@@ -107,6 +114,7 @@ module Deliver
         ScreenSize::IOS_47_MESSAGES => "iPhone 6 (iMessage)",
         ScreenSize::IOS_55_MESSAGES => "iPhone 6 Plus (iMessage)",
         ScreenSize::IOS_58_MESSAGES => "iPhone X (iMessage)",
+        ScreenSize::IOS_65_MESSAGES => "iPhone XS Max (iMessage)",
         ScreenSize::IOS_IPAD_MESSAGES => "iPad (iMessage)",
         ScreenSize::IOS_IPAD_PRO_MESSAGES => "iPad Pro (iMessage)",
         ScreenSize::IOS_IPAD_10_5_MESSAGES => "iPad 10.5 (iMessage)",
@@ -130,6 +138,7 @@ module Deliver
         ScreenSize::IOS_47_MESSAGES,
         ScreenSize::IOS_55_MESSAGES,
         ScreenSize::IOS_58_MESSAGES,
+        ScreenSize::IOS_65_MESSAGES,
         ScreenSize::IOS_IPAD_MESSAGES,
         ScreenSize::IOS_IPAD_PRO_MESSAGES,
         ScreenSize::IOS_IPAD_10_5_MESSAGES
@@ -138,6 +147,9 @@ module Deliver
 
     def self.device_messages
       return {
+        ScreenSize::IOS_65_MESSAGES => [
+          [1242, 2688]
+        ],
         ScreenSize::IOS_58_MESSAGES => [
           [1125, 2436]
         ],
@@ -176,6 +188,9 @@ module Deliver
 
     def self.devices
       return {
+        ScreenSize::IOS_65 => [
+          [1242, 2688]
+        ],
         ScreenSize::IOS_58 => [
           [1125, 2436]
         ],
@@ -232,7 +247,7 @@ module Deliver
     def self.calculate_screen_size(path)
       size = FastImage.size(path)
 
-      UI.user_error!("Could not find or parse file at path '#{path}'") if size.nil? or size.count == 0
+      UI.user_error!("Could not find or parse file at path '#{path}'") if size.nil? || size.count == 0
 
       # Walk up two directories and test if we need to handle a platform that doesn't support landscape
       path_component = Pathname.new(path).each_filename.to_a[-3]
@@ -246,12 +261,12 @@ module Deliver
       devices.each do |device_type, array|
         array.each do |resolution|
           if skip_landscape
-            if size[0] == resolution[0] and size[1] == resolution[1] # portrait
+            if size[0] == (resolution[0]) && size[1] == (resolution[1]) # portrait
               return device_type
             end
           else
-            if (size[0] == resolution[0] and size[1] == resolution[1]) or # portrait
-               (size[1] == resolution[0] and size[0] == resolution[1]) # landscape
+            if (size[0] == (resolution[0]) && size[1] == (resolution[1])) || # portrait
+               (size[1] == (resolution[0]) && size[0] == (resolution[1])) # landscape
               return device_type
             end
           end

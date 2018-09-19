@@ -179,7 +179,8 @@ Style/IfUnlessModifier:
 
 # and and or is okay
 Style/AndOr:
-  Enabled: false
+  Enabled: true
+  EnforcedStyle: conditionals
 
 # Configuration parameters: CountComments.
 Metrics/ClassLength:
@@ -248,6 +249,7 @@ AllCops:
     - '**/lib/assets/custom_action_template.rb'
     - './vendor/**/*'
     - '**/lib/assets/DefaultFastfileTemplate'
+    - '**/spec/fixtures/broken_files/broken_file.rb'
 
 # They have not to be snake_case
 Style/FileName:
@@ -293,6 +295,7 @@ Style/MethodCallWithArgsParentheses:
   IgnoredMethods:
     - 'require'
     - 'require_relative'
+    - 'fastlane_require'
     - 'gem'
     - 'program'
     - 'command'
@@ -307,6 +310,7 @@ Style/MethodCallWithArgsParentheses:
     - 'to'
     - 'describe'
     - 'it'
+    - 'be'
     - 'context'
     - 'before'
     - 'after'

@@ -33,7 +33,7 @@
 [![Twitter: @FastlaneTools](https://img.shields.io/badge/contact-@FastlaneTools-blue.svg?style=flat)](https://twitter.com/FastlaneTools)
 [![License](https://img.shields.io/badge/license-MIT-green.svg?style=flat)](https://github.com/fastlane/fastlane/blob/master/LICENSE)
 
-_spaceship_ exposes both the Apple Developer Center and the iTunes Connect API. This fast and powerful API powers parts of fastlane, and can be leveraged for more advanced fastlane features. Scripting your Developer Center workflow has never been easier!
+_spaceship_ exposes both the Apple Developer Center and the App Store Connect API. This fast and powerful API powers parts of fastlane, and can be leveraged for more advanced fastlane features. Scripting your Developer Center workflow has never been easier!
 
 Get in contact with the creators on Twitter: [@FastlaneTools](https://twitter.com/fastlanetools)
 
@@ -49,7 +49,7 @@ Get in contact with the creators on Twitter: [@FastlaneTools](https://twitter.co
 
 -------
 
-<h5 align="center"><code>spaceship</code> is part of <a href="https://fastlane.tools">fastlane</a>: The easiest way to automate beta deployments and releases for your iOS and Android apps.</h5>
+<h5 align="center"><em>spaceship</em> is part of <a href="https://fastlane.tools">fastlane</a>: The easiest way to automate beta deployments and releases for your iOS and Android apps.</h5>
 
 # What's spaceship?
 
@@ -107,9 +107,9 @@ This requires you to install `pry` using `sudo gem install pry`. `pry` is not in
 
 ##### Open [DeveloperPortal.md](docs/DeveloperPortal.md) for code samples
 
-## iTunes Connect API
+## App Store Connect API
 
-##### Open [iTunesConnect.md](docs/iTunesConnect.md) for code samples
+##### Open [AppStoreConnect.md](docs/AppStoreConnect.md) for code samples
 
 ## 2 Step Verification
 
@@ -135,7 +135,7 @@ Copy everything from `---\n` to your CI server and provide it as environment var
 
 #### Transporter
 
-If you want to upload builds to TestFlight/iTunes Connect from your CI, you have to generate an application specific password:
+If you want to upload builds to TestFlight/App Store Connect from your CI, you have to generate an application specific password:
 
 1. Visit [appleid.apple.com/account/manage](https://appleid.apple.com/account/manage)
 1. Generate a new application specific password
@@ -177,12 +177,12 @@ Overview of the used API endpoints
   - Repair provisioning profiles
   - Download provisioning profiles
   - Team selection
-- `https://itunesconnect.apple.com`:
+- `https://appstoreconnect.apple.com`:
   - Managing apps
   - Managing beta testers
   - Submitting updates to review
   - Managing app metadata
-- `https://du-itc.itunesconnect.apple.com`:
+- `https://du-itc.appstoreconnect.apple.com`:
   - Upload icons, screenshots, trailers ...
 
 _spaceship_ uses all those API points to offer this seamless experience.

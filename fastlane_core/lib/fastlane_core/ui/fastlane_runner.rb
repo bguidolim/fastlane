@@ -24,7 +24,6 @@ require_relative '../env'
 require_relative '../globals'
 require_relative '../analytics/action_completion_context'
 require_relative '../analytics/action_launch_context'
-require_relative '../crash_reporter/crash_reporter'
 require_relative 'errors'
 
 module Commander
@@ -69,9 +68,10 @@ module Commander
           FastlaneCore::UI.user_error!("fastlane requires a minimum version of Xcode #{Fastlane::MINIMUM_XCODE_RELEASE}, please upgrade and make sure to use `sudo xcode-select -s /Applications/Xcode.app`")
         end
 
-        # https://github.com/fastlane/fastlane/issues/11913
-        # action_launch_context = FastlaneCore::ActionLaunchContext.context_for_action_name(@program[:name], args: ARGV)
-        # FastlaneCore.session.action_launched(launch_context: action_launch_context)
+        is_swift = FastlaneCore::FastlaneFolder.swift?
+        fastlane_client_language = is_swift ? :swift : :ruby
+        action_launch_context = FastlaneCore::ActionLaunchContext.context_for_action_name(@program[:name], fastlane_client_language: fastlane_client_language, args: ARGV)
+        FastlaneCore.session.action_launched(launch_context: action_launch_context)
 
         return_value = run_active_command
 
@@ -83,7 +83,6 @@ module Commander
         if FastlaneCore::Helper.test?
           raise e
         else
-          FastlaneCore::CrashReporter.report_crash(exception: e)
           abort("#{e}. Use --help for more information")
         end
       rescue Interrupt => e
@@ -92,7 +91,7 @@ module Commander
           raise e
         else
           action_completed(@program[:name], status: FastlaneCore::ActionCompletionStatus::INTERRUPTED, exception: e)
-          puts("\nCancelled... use --verbose to show the stack trace")
+          abort("\nCancelled... use --verbose to show the stack trace")
         end
       rescue \
         OptionParser::InvalidOption,
@@ -103,7 +102,6 @@ module Commander
         if FastlaneCore::Helper.test?
           raise e
         else
-          FastlaneCore::CrashReporter.report_crash(exception: e)
           if self.active_command.name == "help" && @default_command == :help # need to access directly via @
             # This is a special case, for example for pilot
             # when the user runs `fastlane pilot -u user@google.com`
@@ -131,9 +129,8 @@ module Commander
         rescue_connection_failed_error(e)
       rescue => e # high chance this is actually FastlaneCore::Interface::FastlaneCrash, but can be anything else
         rescue_unknown_error(e)
-        # https://github.com/fastlane/fastlane/issues/11913
-        # ensure
-        #   FastlaneCore.session.finalize_session
+      ensure
+        FastlaneCore.session.finalize_session
       end
     end
 
@@ -151,7 +148,6 @@ module Commander
       FastlaneCore::UI.important("Error accessing file, this might be due to fastlane's directory handling")
       FastlaneCore::UI.important("Check out https://docs.fastlane.tools/advanced/#directory-behavior for more details")
       puts("")
-      FastlaneCore::CrashReporter.report_crash(exception: e)
       raise e
     end
 
@@ -159,14 +155,11 @@ module Commander
       if e.message.include?('Connection reset by peer - SSL_connect')
         handle_tls_error!(e)
       else
-        FastlaneCore::CrashReporter.report_crash(exception: e)
         handle_unknown_error!(e)
       end
     end
 
     def rescue_unknown_error(e)
-      FastlaneCore::CrashReporter.report_crash(exception: e)
-
       action_completed(@program[:name], status: FastlaneCore::ActionCompletionStatus::FAILED, exception: e)
 
       handle_unknown_error!(e)
@@ -176,12 +169,11 @@ module Commander
       action_completed(@program[:name], status: FastlaneCore::ActionCompletionStatus::USER_ERROR, exception: e)
 
       show_github_issues(e.message) if e.show_github_issues
-      FastlaneCore::CrashReporter.report_crash(exception: e)
       display_user_error!(e, e.message)
     end
 
     def handle_tls_error!(e)
-      # Apple has upgraded its iTunes Connect servers to require TLS 1.2, but
+      # Apple has upgraded its App Store Connect servers to require TLS 1.2, but
       # system Ruby 2.0 does not support it. We want to suggest that users upgrade
       # their Ruby version
       suggest_ruby_reinstall(e)
@@ -277,7 +269,8 @@ module Commander
     end
 
     def reraise_formatted!(e, message)
-      raise e, "[!] #{message}".red, e.backtrace
+      backtrace = FastlaneCore::Env.truthy?("FASTLANE_HIDE_BACKTRACE") ? [] : e.backtrace
+      raise e, "[!] #{message}".red, backtrace
     end
 
     def show_github_issues(message_or_error)

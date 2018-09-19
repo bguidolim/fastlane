@@ -17,7 +17,7 @@ module Gym
       unless Gym.config[:skip_build_archive]
         build_app
       end
-      verify_archive
+      verify_archive unless Gym.config[:skip_archive]
       FileUtils.mkdir_p(File.expand_path(Gym.config[:output_directory]))
 
       if Gym.project.ios? || Gym.project.tvos?
@@ -100,6 +100,23 @@ module Gym
       mark_archive_as_built_by_gym(BuildCommandGenerator.archive_path)
       UI.success("Successfully stored the archive. You can find it in the Xcode Organizer.") unless Gym.config[:archive_path].nil?
       UI.verbose("Stored the archive in: " + BuildCommandGenerator.archive_path)
+
+      post_build_app
+    end
+
+    # Post-processing of build_app
+    def post_build_app
+      command = BuildCommandGenerator.post_build
+
+      return if command.empty?
+
+      print_command(command, "Generated Post-Build Command") if FastlaneCore::Globals.verbose?
+      FastlaneCore::CommandExecutor.execute(command: command,
+                                          print_all: true,
+                                      print_command: !Gym.config[:silent],
+                                              error: proc do |output|
+                                                ErrorHandler.handle_build_error(output)
+                                              end)
     end
 
     # Makes sure the archive is there and valid

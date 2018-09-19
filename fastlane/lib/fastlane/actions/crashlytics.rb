@@ -58,13 +58,13 @@ module Fastlane
       end
 
       def self.description
-        "Upload a new build to Crashlytics Beta"
+        "Upload a new build to [Crashlytics Beta](http://try.crashlytics.com/beta/)"
       end
 
       def self.available_options
         platform = Actions.lane_context[Actions::SharedValues::PLATFORM_NAME]
 
-        if platform == :ios or platform.nil?
+        if platform == :ios || platform.nil?
           ipa_path_default = Dir["*.ipa"].sort_by { |x| File.mtime(x) }.last
         end
 
@@ -161,8 +161,8 @@ module Fastlane
 
       def self.details
         [
-          "Additionally you can specify `notes`, `emails`, `groups` and `notifications`.",
-          "Distributing to Groups: When using the `groups` parameter, it's important to use the group **alias** names for each group you'd like to distribute to. A group's alias can be found in the web UI. If you're viewing the Beta page, you can open the groups dialog here:"
+          "Additionally, you can specify `notes`, `emails`, `groups` and `notifications`.",
+          "Distributing to Groups: When using the `groups` parameter, it's important to use the group **alias** names for each group you'd like to distribute to. A group's alias can be found in the web UI. If you're viewing the Beta page, you can open the groups dialog by clicking the 'Manage Groups' button."
         ].join("\n")
       end
 

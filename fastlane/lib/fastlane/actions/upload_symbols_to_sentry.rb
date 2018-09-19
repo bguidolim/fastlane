@@ -71,11 +71,7 @@ module Fastlane
       end
 
       def self.details
-        [
-          "This action allows you to upload symbolication files to Sentry.",
-          "It's extra useful if you use it to download the latest dSYM files from Apple when you",
-          "use Bitcode"
-        ].join(" ")
+        "This action allows you to upload symbolication files to Sentry. It's extra useful if you use it to download the latest dSYM files from Apple when you use Bitcode."
       end
 
       def self.available_options
@@ -100,13 +96,13 @@ module Fastlane
                                        env_name: "SENTRY_ORG_SLUG",
                                        description: "Organization slug for Sentry project",
                                        verify_block: proc do |value|
-                                         UI.user_error!("No organization slug for SentryAction given, pass using `org_slug: 'org'`") unless value and !value.empty?
+                                         UI.user_error!("No organization slug for SentryAction given, pass using `org_slug: 'org'`") unless value && !value.empty?
                                        end),
           FastlaneCore::ConfigItem.new(key: :project_slug,
                                        env_name: "SENTRY_PROJECT_SLUG",
                                        description: "Project slug for Sentry",
                                        verify_block: proc do |value|
-                                         UI.user_error!("No project slug for SentryAction given, pass using `project_slug: 'project'`") unless value and !value.empty?
+                                         UI.user_error!("No project slug for SentryAction given, pass using `project_slug: 'project'`") unless value && !value.empty?
                                        end),
           FastlaneCore::ConfigItem.new(key: :dsym_path,
                                        env_name: "SENTRY_DSYM_PATH",
@@ -158,9 +154,11 @@ module Fastlane
       end
 
       def self.deprecated_notes
-        "Please use the `sentry` plugin instead.\n" \
-          "Install using `fastlane add_plugin sentry`.\n" \
-          "Replace `upload_symbols_to_sentry` with `sentry_upload_dsym`"
+        [
+          "Please use the `sentry` plugin instead.",
+          "Install using `fastlane add_plugin sentry`.",
+          "Replace `upload_symbols_to_sentry(...)` with `sentry_upload_dsym(...)`."
+        ].join("\n")
       end
     end
   end
